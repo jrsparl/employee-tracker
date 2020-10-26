@@ -5,27 +5,27 @@ VALUES
     ('Sales'),
     ('HR');
 
-INSERT INTO roleTBL(empl_title,empl_salary,is_manager, dept_id)
+INSERT INTO roleTBL(role_title,role_salary, dept_id)
 VALUES
-    ('Distribution Manager', 50000, 1, 2),
-    ('Warehouse Associate', 20000, 0, 2),
-    ('Buyer', 60000, 1, 1),
-    ('Assistant Buyer', 30000, 0, 1),
-    ('Retail Manager', 40000, 1, 3),
-    ('Retail Associate', 20000, 0, 3),
-    ('VP HR', 100000, 1, 4),
-    ('Administrative Assistant', 25000, 0, 4);
+    ('Distribution Manager', 50000, 2),
+    ('Warehouse Associate', 20000, 2),
+    ('Buyer', 60000, 1),
+    ('Assistant Buyer', 30000, 1),
+    ('Retail Manager', 40000, 3),
+    ('Retail Associate', 20000, 3),
+    ('VP HR', 100000, 4),
+    ('Administrative Assistant', 25000, 4);
 
 
-INSERT INTO employeeTBL (first_name, last_name, role_id)
+INSERT INTO employeeTBL (first_name, last_name, role_id, manager_id)
 VALUES
-  ('Ronald', 'Firbank', 1),
-  ('Virginia', 'Woolf', 1),
-  ('Piers', 'Gaveston', 1),
-  ('Charles', 'LeRoi', 2),
-  ('Katherine', 'Mansfield', 2),
-  ('Dora', 'Carrington', 3),
-  ('Edward', 'Bellamy', 3),
-  ('Montague', 'Summers', 3),
-  ('Octavia', 'Butler', 3),
-  ('Unica', 'Zurn', NULL);
+  ('Ronald', 'Firbank', 1, NULL),
+  ('Virginia', 'Woolf', 2, 1),
+  ('Piers', 'Gaveston', 2, 1),
+  ('Charles', 'LeRoi', 3, NULL),
+  ('Katherine', 'Mansfield', 4, 4),
+  ('Dora', 'Carrington', 4, 4),
+  ('Edward', 'Bellamy', 5, NULL),
+  ('Montague', 'Summers', 6, 7),
+  ('Octavia', 'Butler', 7, NULL),
+  ('Unica', 'Zurn', 8, 9);

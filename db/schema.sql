@@ -12,9 +12,8 @@ CREATE TABLE departmentTBL
 CREATE TABLE roleTBL
 (
   id INT NOT NULL AUTO_INCREMENT,
-  empl_title VARCHAR(100),
-  empl_salary DECIMAL,
-  is_manager BOOLEAN,
+  role_title VARCHAR(100),
+  role_salary DECIMAL,
   dept_id INTEGER,
   PRIMARY KEY(id),
   CONSTRAINT fk_dept FOREIGN KEY (dept_id) REFERENCES departmentTBL(id) ON DELETE SET NULL
@@ -34,8 +33,9 @@ CREATE TABLE employeeTBL(
     first_name VARCHAR(30),
     last_name VARCHAR(30),
     role_id INTEGER,
-    -- manager_id INTEGER,
+    manager_id INTEGER,
     PRIMARY KEY(id),
-    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roleTBL(id) ON DELETE SET NULL
-    -- CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES managerTBL(id) ON DELETE SET NULL
+    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roleTBL(id) ON DELETE SET NULL,
+    CONSTRAINT pk_manager FOREIGN KEY (manager_id) REFERENCES employeeTBL(id) ON DELETE SET NULL
 )
+

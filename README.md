@@ -33,7 +33,8 @@ This is a command line prompt application that allows you to manager departments
 ![badmath](https://img.shields.io/github/languages/top/nielsenjared/badmath)
 
 ## Links
-...
+Video Demo:
+https://drive.google.com/file/d/1EFsAe3P3joRR8CuscvMrRorHlfk2fXRJ/view
 
 
 # Contributor Covenant Code of Conduct

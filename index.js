@@ -139,12 +139,12 @@ const addDepartment = () => {
             },
             function(err, res) {
               if (err) throw err;
-              console.log(res.affectedRows + ' product inserted!\n');
+              console.log(res.affectedRows + ' department added!\n');
               promptUser();
             }
           );
           // logs the actual query being run
-          console.log(query.sql); 
+        //   console.log(query.sql); 
           //
     })
 
@@ -204,12 +204,12 @@ const addRole = () => {
             },
             function(err, res) {
               if (err) throw err;
-              console.log(res.affectedRows + ' product inserted!\n');
+              console.log(res.affectedRows + ' role added!\n');
               promptUser();
             }
           );
           // logs the actual query being run
-          console.log(query.sql); 
+        //   console.log(query.sql); 
           //
     })
 
@@ -217,6 +217,31 @@ const addRole = () => {
 }
 
 const addEmployee = () => {
+ 
+    connection.promise().query(
+        `SELECT id, role_title FROM roleTBL`
+    ).then(function (data) {
+
+        let roleArray = data[0].map(function (el) {
+            return {
+                name: el.role_title,
+                value: el.id
+            };
+        });
+
+        connection.promise().query(
+            `SELECT employeeTBL.id, employeeTBL.first_name, employeeTBL.last_name, roleTBL.role_title
+            FROM employeeTBL 
+            INNER JOIN roleTBL ON employeeTBL.role_id = roleTBL.id
+            WHERE employeeTBL.manager_id IS NULL`
+        ).then(function (data) {
+            // console.log(data)
+            let employeeArray = data[0].map(function (el) {
+                return {
+                    name: el.first_name + ' ' + el.last_name + ' ' + el.role_title,
+                    value: el.id
+                };
+            });
 
     inquirer.prompt([
         {
@@ -246,30 +271,23 @@ const addEmployee = () => {
             }
         },
         {
-            type: 'Input',
+            type: 'list',
             name: 'roleID',
-            message: 'Please enter the role ID.',
-            validate: roleID => {
-                if (roleID) {
-                    return true;
-                } else {
-                    console.log('Please enter the department ID!');
-                    return false;
-                }
-            }
+            message: "Please select the employee's role.",
+            choices: roleArray
         },
         {
-            type: 'Input',
+            type: 'confirm',
+            name: 'confirmManager',
+            message: 'Would you like to add a manager for this employee?',
+            default: true
+        },
+        {
+            type: 'list',
             name: 'managerID',
-            message: 'Please enter the manger ID.',
-            validate: managerID => {
-                if (managerID) {
-                    return true;
-                } else {
-                    console.log('Please enter the department ID!');
-                    return false;
-                }
-            }
+            message: 'Please select the manager.',
+            choices: employeeArray, 
+            when: ({ confirmManager }) => confirmManager
         }
     ]).then(function(data){
         const query = connection.query(
@@ -284,77 +302,87 @@ const addEmployee = () => {
               if (err){
                   console.log("There was an issue with submission please type node index and start again.")
               }
-              console.log(res.affectedRows + ' product inserted!\n');
+              console.log(res.affectedRows + ' employee added!\n');
               promptUser();
             }
           );
           
     })
+});
+  
+});
 
-    
 }
 
 
-const updateEmployeeRole = () =>{
+const updateEmployeeRole = () => {
 
     connection.promise().query(
-        `SELECT CONCAT(e.id, "-", e.first_name," ", e.last_name) AS 'EmployeeID' FROM employeeTBL AS e`
-        
-    ).then(function(data){
-        
-        let eList = data[0]
-        let employeeArray = eList.map( function( el ){ 
-            return el.EmployeeID; 
-           });
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'employeeChoice',
-                message: 'Please select employee to update.',
-                choices: employeeArray
-            },
-            {
-                type: 'Input',
-                name: 'roleID',
-                message: 'Please enter the role ID.',
-                validate: roleID => {
-                    if (roleID) {
-                        return true;
-                    } else {
-                        console.log('Please enter the department ID!');
-                        return false;
-                    }
-                }
-            },
-        
-        ]).then(function(Newdata){
-            let eString = Newdata.employeeChoice
-            console.log(eString)
-            let eIDarray = eString.split("-");
-            let eID = eIDarray[0]
-            console.log(eID)
-            const query = connection.query(
-                'UPDATE employeeTBL SET ? WHERE id=' + eID,
-                {
-                    // first_name: data.firstName,
-                    // last_name: data.lastName,
-                    role_id: Newdata.roleID
-                    // manager_id: data.managerID
-                },
-                function(err, res) {
-                  if (err) throw err;
-                  console.log(res.affectedRows + ' product inserted!\n');
-                  promptUser();
-                }
-              );
-              // logs the actual query being run
-              console.log(query.sql); 
-              
-      
-    
-    
+        `SELECT id, first_name, last_name FROM employeeTBL`
+    ).then(function (data) {
+
+        let employeeArray = data[0].map(function (el) {
+            return {
+                name: el.first_name + ' ' + el.last_name,
+                value: el.id
+            };
         });
-    })
+
+        connection.promise().query(
+            `SELECT id, role_title FROM roleTBL`
+        ).then(function (data) {
+
+            let roleArray = data[0].map(function (el) {
+                return {
+                    name: el.role_title,
+                    value: el.id
+                };
+            });
+
+
+
+
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employeeChoice',
+                    message: 'Please select employee to update.',
+                    choices: employeeArray
+                },
+                {
+                    type: 'list',
+                    name: 'roleID',
+                    message: 'Please select the new role.',
+                    choices: roleArray
+                },
+
+            ]).then(function (Newdata) {
+                
+                    let eID = Newdata.employeeChoice
+    
+                    const query = connection.query(
+                        'UPDATE employeeTBL SET ? WHERE ?',
+                        [
+                        {
+                            role_id: Newdata.roleID
+                        },
+                        {
+                            id: eID
+                        }
+                        ],
+                        function(err, res) {
+                          if (err) throw err;
+                          console.log(res.affectedRows + ' employee updated!\n');
+                          promptUser();
+                        }
+                      );
+                      // logs the actual query being run
+                    //   console.log(query.sql); 
+            });
+
+        });
+    });
 }
 
 

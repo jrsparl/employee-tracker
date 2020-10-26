@@ -154,6 +154,19 @@ const addDepartment = () => {
 
 const addRole = () => {
 
+    connection.promise().query(
+        `SELECT id, dept_name FROM departmentTBL`
+    ).then(function (data) {
+
+        let deptArray = data[0].map(function (el) {
+            return {
+                name: el.dept_name,
+                value: el.id
+            };
+        });
+
+
+
     inquirer.prompt([
         {
             type: 'Input',
@@ -182,17 +195,10 @@ const addRole = () => {
             }
         },
         {
-            type: 'Input',
+            type: 'list',
             name: 'roleDepartment',
-            message: 'Please enter the department ID.',
-            validate: roleDepartment => {
-                if (roleDepartment) {
-                    return true;
-                } else {
-                    console.log('Please enter the department ID!');
-                    return false;
-                }
-            }
+            message: 'Please select the department.',
+            choices: deptArray
         }
     ]).then(function(data){
         const query = connection.query(
@@ -212,6 +218,7 @@ const addRole = () => {
         //   console.log(query.sql); 
           //
     })
+});
 
     
 }
